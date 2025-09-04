@@ -1,7 +1,7 @@
 streamlit
-pandas
 numpy
-scikit-learn
+pandas
 joblib
 mlxtend
-catboost
+scikit-learn==1.5.2
+catboost==1.2.8
