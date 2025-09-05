@@ -48,6 +48,20 @@ TN = st.number_input("TN (%)", min_value=0.0, value=2.10)
 input_state = np.array([Day, Temperature, MC, pH, EC, TN])
 
 if st.button("Predict"):
+    # ---------- Stage 1 - Predicted microbial abundance ----------
+    state_scaled = scaler.transform(input_state.reshape(1, -1))
+    micro_pred = sclf_stage1.predict(state_scaled)[0]
+
+    # ---------- Stage 2 - Predicted Lable ----------
+    X_stage2 = np.hstack([state_scaled, np.array([micro_pred]).reshape(1, -1)])
+    y2_pred = sclf_stage2.predict(X_stage2)[0]
+
+    # ---------- RL ----------
     best_micro, best_y2 = find_best_micro(input_state)
-    st.success(f"Optimal microbial abundance: {best_micro}")
-    st.success(f"Best Lable: {best_y2:.4f}")
+
+    # ---------- Output result ----------
+    st.subheader("Prediction Results")
+    st.success(f"Predicted microbial abundance (%): {micro_pred:.4f}")
+    st.success(f"Predicted lable (score): {y2_pred:.4f}")
+    st.success(f"RL Optimal microbial abundance (%): {best_micro}")
+    st.success(f"RL Optimal lable (score): {best_y2:.4f}")
